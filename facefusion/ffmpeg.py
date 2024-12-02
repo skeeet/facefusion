@@ -71,6 +71,9 @@ def merge_video(target_path : str, output_video_resolution : str, output_video_f
 	temp_frames_pattern = get_temp_frames_pattern(target_path, '%08d')
 	commands = [ '-r', str(temp_video_fps), '-i', temp_frames_pattern, '-s', str(output_video_resolution), '-c:v', state_manager.get_item('output_video_encoder') ]
 
+	if state_manager.get_item('output_video_encoder') in ['hevc_nvenc', 'libx265', 'hevc_amf']:
+		commands.extend(['-tag:v', 'hvc1'])
+
 	if state_manager.get_item('output_video_encoder') in [ 'libx264', 'libx265' ]:
 		output_video_compression = round(51 - (state_manager.get_item('output_video_quality') * 0.51))
 		commands.extend([ '-crf', str(output_video_compression), '-preset', state_manager.get_item('output_video_preset') ])
